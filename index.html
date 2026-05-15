@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Hades — Fated List</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --flame: #e8602a;
+    --gold: #c9954a;
+    --gold-light: #f0c070;
+    --bg: #0d0a08;
+    --surface: #16110d;
+    --surface2: #1e1710;
+    --border: #2e2218;
+    --text: #d9c9b0;
+    --muted: #7a6a55;
+    --done-bg: #0f1a10;
+    --done-text: #4a6b40;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-weight: 300;
+    font-size: 17px;
+    line-height: 1.55;
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+
+  /* Subtle texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, #3a1a0820 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: linear-gradient(180deg, #0d0a08 80%, transparent);
+    padding: 18px 18px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .progress-bar-wrap {
+    margin-top: 8px;
+    background: var(--border);
+    border-radius: 2px;
+    height: 3px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--flame), var(--gold-light));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+
+  .progress-label {
+    margin-top: 5px;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  main {
+    position: relative;
+    z-index: 1;
+    padding: 0 14px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .section {
+    margin-top: 28px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 7px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-icon {
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .section-count {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'Cinzel', serif;
+  }
+
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 11px 12px;
+    border-radius: 6px;
+    margin-bottom: 5px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, opacity 0.3s;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  .item:active {
+    background: var(--surface2);
+  }
+
+  .item.done {
+    background: var(--done-bg);
+    border-color: #1a2e1a;
+    opacity: 0.65;
+  }
+
+  .item.done .item-name {
+    color: var(--done-text);
+    text-decoration: line-through;
+    text-decoration-color: #2d4d2d;
+  }
+
+  .item.done .item-note {
+    color: #3a5030;
+  }
+
+  .checkbox {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1.5px solid var(--muted);
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .item.done .checkbox {
+    background: #2d5a28;
+    border-color: #3d7a33;
+  }
+
+  .checkmark {
+    display: none;
+    color: #7ac970;
+    font-size: 13px;
+    line-height: 1;
+  }
+
+  .item.done .checkmark { display: block; }
+
+  .item-body { flex: 1; min-width: 0; }
+
+  .item-name {
+    font-weight: 400;
+    font-size: 16px;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .item-note {
+    font-size: 13.5px;
+    color: var(--muted);
+    font-style: italic;
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+
+  .tip-block {
+    background: #1a130a;
+    border-left: 2px solid var(--flame);
+    border-radius: 0 5px 5px 0;
+    padding: 9px 12px;
+    margin-top: 10px;
+    margin-bottom: 4px;
+  }
+
+  .tip-block p {
+    font-size: 13.5px;
+    color: #a09070;
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .tip-block strong {
+    color: var(--gold);
+    font-style: normal;
+    font-weight: 400;
+  }
+
+  .reset-btn {
+    display: block;
+    margin: 40px auto 20px;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 9px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .reset-btn:active { opacity: 0.6; }
+
+  .flame-divider {
+    text-align: center;
+    color: var(--flame);
+    font-size: 14px;
+    opacity: 0.4;
+    margin: 6px 0 2px;
+    letter-spacing: 8px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⚔ Fated List — Remaining</h1>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progressLabel">0 of 0 complete</div>
+</header>
+
+<main>
+
+  <!-- LEGENDARY BOONS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🌟</span>
+      <span class="section-title">Legendary Boons</span>
+      <span class="section-count" id="count-legendary"></span>
+    </div>
+
+    <div class="item" data-id="divine-protection" data-section="legendary" onclick="toggle(this)">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="item-body">
+        <div class="item-name">Divine Protection</div>
+        <div class="item-note">Athena — needs Brilliant Riposte + 2 of: Divine Strike / Flourish / Dash / Holy Shield</div>
+      </div>
+    </div>
+
+    <div class="item" data-id="fully-loaded" data-section="legendary" onclick="toggle(this)">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="item-body">
+        <div class="item-name">Fully Loaded</div>
+        <div class="item-note">Artemis — any 2 of: Hunter's Mark, Exit Wounds, Support Fire (all Tier 1, easy)</div>
+      </div>
+    </div>
+
+    <div class="item" data-id="winter-harvest" data-section="legendary" onclick="toggle(this)">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="item-body">
+        <div class="item-name">Winter Harvest</div>
+        <div class="item-note">Demeter — 2 of: Arctic Blast, Killing Freeze, Ravenous Will. Need a Demeter attack/dash boon first for Arctic Blast or Killing Freeze</div>
+      </div>
+    </div>
+
+    <div class="tip-block">
+      <p><strong>Tip:</strong> Use God's Legacy (Mirror) + Yarn of Ariadne (Well of Charon) + relevant keepsakes to raise legendary chances. There's a hidden roll even when prereqs are met — keep trying.</p>
+    </div>
+  </div>
+
+  <!-- DIVINE PAIRINGS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">⚡</span>
+      <span class="section-title">Divine Pairings</span>
+      <span class="section-count" id="count-duos"></span>
+    </div>
+
+    <div class="item" data-id="lightning-phalanx" data-section="duos" onclick="toggle(this)">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="item-body">
+        <div class="item-name">Lightning Phalanx</div>
+        <div class="item-note">Athena + Zeus — need Phalanx Shot + any Zeus boon. Incompatible with Aspect of Beowulf.</div>
+      </div>
+    </div>
+
+    <div class="item" data-id="ice-wine" data-section="duos" onclick="toggle(this)">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="item-body">
+        <div class="item-name">Ice Wine</div>
+        <div class="item-note">Demeter + Dionysus — need Trippy Shot + any Demeter boon. Incompatible with Blizzard Shot or Curse of Drowning.</div>
+      </div>
+    </div>
+
+    <div class="item" data-id="cold-fusion" data-section="duos" onclick="toggle(this)">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="item-body">
+        <div class="item-name">Cold Fusion</div>
+        <div class="item-note">Demeter + Zeus — any boon from each god. Easiest of the three to set up.</div>
+      </div>
+    </div>
+
+    <div class="tip-block">
+      <p><strong>Tip:</strong> Only unlock the duo combos you're actively hunting. Fewer eligible duos = better odds of the specific one appearing.</p>
+    </div>
+  </div>
+
+  <!-- PRIMORDIAL -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🌀</span>
+      <span class="section-title">Primordial</span>
+      <span class="section-count" id="count-primordial"></span>
+    </div>
+
+    <div class="item" data-id="defiance" data-section="primordial" onclick="toggle(this)">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="item-body">
+        <div class="item-name">Defiance (Boon)</div>
+        <div class="item-note">Chaos blessing — only appears if you already have another Chaos boon this run. Requires 2 Chaos gates. Buy Light of Ixion from the Well to guarantee a second gate.</div>
+      </div>
+    </div>
+
+    <div class="item" data-id="slippery" data-section="primordial" onclick="toggle(this)">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="item-body">
+        <div class="item-name">Slippery (Bane)</div>
+        <div class="item-note">Chaos curse — delays Bloodstone reclaim. Just needs to be suffered once. Safe to take on non-Cast builds.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEAPON -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏹</span>
+      <span class="section-title">Weapon Goals</span>
+      <span class="section-count" id="count-weapons"></span>
+    </div>
+
+    <div class="item" data-id="coronacht-rama" data-section="weapons" onclick="toggle(this)">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="item-body">
+        <div class="item-name">Reach Surface — Hidden Aspect of Coronacht</div>
+        <div class="item-note">Aspect of Rama. Prereqs: Guan Yu revealed, 5 Titan Blood in Coronacht, hear waking phrase from Artemis ("drawn in the arms of the seventh avatar"). Equip Adamant Arrowhead keepsake.</div>
+      </div>
+    </div>
+
+    <div class="item" data-id="flurry-jab" data-section="weapons" onclick="toggle(this)">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="item-body">
+        <div class="item-name">Flurry Jab (Eternal Spear)</div>
+        <div class="item-note">Daedalus Hammer upgrade — RNG. Use Aspect of Zagreus or Achilles only. Don't take any Spin upgrades or Flaring Spin (blocks it from appearing).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HARSH CONDITIONS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🔥</span>
+      <span class="section-title">Harsh Conditions</span>
+      <span class="section-count" id="count-harsh"></span>
+    </div>
+
+    <div class="tip-block" style="margin-bottom:10px; margin-top:0;">
+      <p><strong>Strategy:</strong> Each condition only needs Rank 1. Run them solo with no other Pact conditions active. Easiest → hardest order below.</p>
+    </div>
+
+    <div class="item" data-id="lasting-consequences" data-section="harsh" onclick="toggle(this)">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="item-body">
+        <div class="item-name">Lasting Consequences</div>
+        <div class="item-note">−20% healing from items at rank 1. Very minor — do this first.</div>
+      </div>
+    </div>
+
+    <div class="item" data-id="approval-process" data-section="harsh" onclick="toggle(this)">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="item-body">
+        <div class="item-name">Approval Process</div>
+        <div class="item-note">2 boon choices instead of 3. Manageable if you stay flexible about your build.</div>
+      </div>
+    </div>
+
+    <div class="item" data-id="forced-overtime" data-section="harsh" onclick="toggle(this)">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="item-body">
+        <div class="item-name">Forced Overtime</div>
+        <div class="item-note">Enemies move and attack faster. Easier with ranged weapons or strong Deflect boons.</div>
+      </div>
+    </div>
+
+    <div class="item" data-id="underworld-customs" data-section="harsh" onclick="toggle(this)">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="item-body">
+        <div class="item-name">Underworld Customs</div>
+        <div class="item-note">No Centaur Hearts in chambers. Run on a weapon where you can avoid damage — bow or spear work well.</div>
+      </div>
+    </div>
+
+    <div class="item" data-id="routine-inspection" data-section="harsh" onclick="toggle(this)">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="item-body">
+        <div class="item-name">Routine Inspection</div>
+        <div class="item-note">Removes a Mirror talent mid-run. Requires Mirror of Night to be fully unlocked first. Do this after completing Dark Reflections.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DARK REFLECTIONS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🪞</span>
+      <span class="section-title">Dark Reflections</span>
+      <span class="section-count" id="count-mirror"></span>
+    </div>
+
+    <div class="tip-block" style="margin-bottom:10px; margin-top:0;">
+      <p><strong>Strategy:</strong> Don't do them all at once. Batch easy ones together, save Stubborn Defiance for last.</p>
+    </div>
+
+    <div class="item" data-id="deep-pockets" data-section="mirror" onclick="toggle(this)">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="item-body">
+        <div class="item-name">Deep Pockets</div>
+        <div class="item-note">Starts you with bonus Obols. Zero downside — stack with another from this list.</div>
+      </div>
+    </div>
+
+    <div class="item" data-id="privileged-status" data-section="mirror" onclick="toggle(this)">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="item-body">
+        <div class="item-name">Privileged Status</div>
+        <div class="item-note">+20% damage vs enemies with 2+ curses. Pure upside on multi-curse builds. Combine with Deep Pockets run.</div>
+      </div>
+    </div>
+
+    <div class="item" data-id="high-confidence" data-section="mirror" onclick="toggle(this)">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="item-body">
+        <div class="item-name">High Confidence</div>
+        <div class="item-note">+5% damage per rank while above 80% health. Arthur sword with Spiked Collar keepsake helps stay healthy. Combine with Abyssal Blood run.</div>
+      </div>
+    </div>
+
+    <div class="item" data-id="abyssal-blood" data-section="mirror" onclick="toggle(this)">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="item-body">
+        <div class="item-name">Abyssal Blood</div>
+        <div class="item-note">Slows/weakens enemies with a Cast lodged in them. Run Arthur sword — strong enough that you won't miss Boiling Blood.</div>
+      </div>
+    </div>
+
+    <div class="item" data-id="ruthless-reflex" data-section="mirror" onclick="toggle(this)">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="item-body">
+        <div class="item-name">Ruthless Reflex</div>
+        <div class="item-note">+50% damage when dashing before getting hit. Gilgamesh fists give 3 base dashes — much easier to trigger consistently.</div>
+      </div>
+    </div>
+
+    <div class="item" data-id="stubborn-defiance" data-section="mirror" onclick="toggle(this)">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="item-body">
+        <div class="item-name">Stubborn Defiance</div>
+        <div class="item-note">⚠ Do this last. Replaces Death Defiance with a single 30% heal on 0 HP. Use Zeus Shield or Achilles Spear with a strong build at low heat.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LYRE -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🎵</span>
+      <span class="section-title">Other</span>
+      <span class="section-count" id="count-other"></span>
+    </div>
+
+    <div class="item" data-id="lyre" data-section="other" onclick="toggle(this)">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="item-body">
+        <div class="item-name">Learn to Play the Lyre</div>
+        <div class="item-note">Bond with Orpheus is done — just keep talking to him between runs. The lyre dialogue will eventually cycle through naturally.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flame-divider">· · ·</div>
+  <button class="reset-btn" onclick="resetAll()">Reset All</button>
+
+</main>
+
+<script>
+  const STORAGE_KEY = 'hades_checklist_v1';
+
+  function loadState() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+    catch { return {}; }
+  }
+
+  function saveState(state) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function toggle(el) {
+    const id = el.dataset.id;
+    const state = loadState();
+    state[id] = !state[id];
+    saveState(state);
+    applyState(el, state[id]);
+    updateProgress();
+  }
+
+  function applyState(el, done) {
+    el.classList.toggle('done', done);
+  }
+
+  function updateProgress() {
+    const state = loadState();
+    const allItems = document.querySelectorAll('.item[data-id]');
+    const total = allItems.length;
+    const done = [...allItems].filter(el => state[el.dataset.id]).length;
+    const pct = total ? Math.round((done / total) * 100) : 0;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = `${done} of ${total} complete`;
+
+    // Section counts
+    const sections = {};
+    allItems.forEach(el => {
+      const s = el.dataset.section;
+      if (!sections[s]) sections[s] = { total: 0, done: 0 };
+      sections[s].total++;
+      if (state[el.dataset.id]) sections[s].done++;
+    });
+    Object.entries(sections).forEach(([s, { total, done }]) => {
+      const el = document.getElementById('count-' + s);
+      if (el) el.textContent = `${done}/${total}`;
+    });
+  }
+
+  function resetAll() {
+    if (!confirm('Reset all checkboxes?')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    document.querySelectorAll('.item[data-id]').forEach(el => el.classList.remove('done'));
+    updateProgress();
+  }
+
+  // Init
+  const state = loadState();
+  document.querySelectorAll('.item[data-id]').forEach(el => {
+    if (state[el.dataset.id]) applyState(el, true);
+  });
+  updateProgress();
+</script>
+</body>
+</html>

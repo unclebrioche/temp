@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -19,9 +20,7 @@
     --done-bg: #0f1a10;
     --done-text: #4a6b40;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
     background: var(--bg);
     color: var(--text);
@@ -32,8 +31,6 @@
     min-height: 100vh;
     padding-bottom: 60px;
   }
-
-  /* Subtle texture overlay */
   body::before {
     content: '';
     position: fixed;
@@ -42,16 +39,14 @@
     pointer-events: none;
     z-index: 0;
   }
-
   header {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: linear-gradient(180deg, #0d0a08 80%, transparent);
+    background: linear-gradient(180deg, #0d0a08 85%, transparent);
     padding: 18px 18px 10px;
     border-bottom: 1px solid var(--border);
   }
-
   header h1 {
     font-family: 'Cinzel', serif;
     font-size: 13px;
@@ -60,534 +55,836 @@
     text-transform: uppercase;
     color: var(--gold);
   }
+  .progress-bar-wrap { margin-top: 8px; background: var(--border); border-radius: 2px; height: 3px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--flame), var(--gold-light)); border-radius: 2px; transition: width 0.5s ease; }
+  .progress-label { margin-top: 5px; font-size: 12px; color: var(--muted); letter-spacing: 0.05em; }
+  main { position: relative; z-index: 1; padding: 0 14px; max-width: 600px; margin: 0 auto; }
+  .section { margin-top: 28px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding-bottom: 7px; border-bottom: 1px solid var(--border); }
+  .section-icon { font-size: 16px; line-height: 1; }
+  .section-title { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); }
+  .section-count { margin-left: auto; font-size: 12px; color: var(--muted); font-family: 'Cinzel', serif; }
 
-  .progress-bar-wrap {
-    margin-top: 8px;
-    background: var(--border);
-    border-radius: 2px;
-    height: 3px;
-    overflow: hidden;
-  }
+.item {
+display: flex;
+align-items: flex-start;
+gap: 12px;
+padding: 11px 12px;
+border-radius: 6px;
+margin-bottom: 5px;
+background: var(–surface);
+border: 1px solid var(–border);
+cursor: pointer;
+transition: background 0.2s, border-color 0.2s, opacity 0.3s;
+-webkit-tap-highlight-color: transparent;
+user-select: none;
+}
+.item:active { background: var(–surface2); }
+.item.done { background: var(–done-bg); border-color: #1a2e1a; opacity: 0.6; }
+.item.done .item-name { color: var(–done-text); text-decoration: line-through; text-decoration-color: #2d4d2d; }
+.item.done .item-note, .item.done .pill-row, .item.done .detail-block { opacity: 0.4; }
+.checkbox { flex-shrink: 0; width: 20px; height: 20px; border-radius: 4px; border: 1.5px solid var(–muted); background: transparent; display: flex; align-items: center; justify-content: center; margin-top: 2px; transition: background 0.2s, border-color 0.2s; }
+.item.done .checkbox { background: #2d5a28; border-color: #3d7a33; }
+.checkmark { display: none; color: #7ac970; font-size: 13px; line-height: 1; }
+.item.done .checkmark { display: block; }
+.item-body { flex: 1; min-width: 0; }
+.item-name { font-weight: 400; font-size: 16px; color: var(–text); line-height: 1.3; }
+.item-note { font-size: 13px; color: var(–muted); font-style: italic; margin-top: 3px; line-height: 1.45; }
 
-  .progress-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--flame), var(--gold-light));
-    border-radius: 2px;
-    transition: width 0.5s ease;
-  }
+/* heat meta */
+.item-meta { display: flex; align-items: center; gap: 6px; margin-top: 3px; }
+.skull-badge { font-size: 11px; color: #806050; letter-spacing: 1px; }
+.fire-badge { font-size: 11px; }
 
-  .progress-label {
-    margin-top: 5px;
-    font-size: 12px;
-    color: var(--muted);
-    letter-spacing: 0.05em;
-  }
+/* pill rows */
+.pill-row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 4px; margin-top: 7px; }
+.pill-row-label {
+font-family: ‘Cinzel’, serif;
+font-size: 9px;
+font-weight: 600;
+letter-spacing: 0.14em;
+text-transform: uppercase;
+color: #5a4830;
+margin-top: 3px;
+margin-right: 2px;
+flex-shrink: 0;
+}
+.pill {
+display: inline-flex;
+align-items: center;
+gap: 3px;
+font-size: 11.5px;
+font-style: normal;
+font-weight: 400;
+padding: 2px 7px 2px 5px;
+border-radius: 3px;
+border: 1px solid;
+line-height: 1.4;
+white-space: nowrap;
+}
+.pill-icon { font-size: 10px; line-height: 1; }
+.pill.attack   { background:#3d1f00; color:#e09050; border-color:#6a3800; }
+.pill.special  { background:#1e1030; color:#b080e0; border-color:#4a2880; }
+.pill.dash     { background:#001e28; color:#50c0d0; border-color:#0a5060; }
+.pill.cast     { background:#001828; color:#4090d8; border-color:#0a3868; }
+.pill.conflict { background:#2a0a00; color:#e05030; border-color:#5a1800; }
+.pill.keepsake { background:#1a1408; color:#c09050; border-color:#4a3818; }
+.pill.weapon   { background:#1a0a14; color:#d06090; border-color:#5a1840; }
+.pill.neutral  { background:#141210; color:#908070; border-color:#302820; }
 
-  main {
-    position: relative;
-    z-index: 1;
-    padding: 0 14px;
-    max-width: 600px;
-    margin: 0 auto;
-  }
+/* detail block for keepsakes */
+.detail-block {
+margin-top: 8px;
+border-top: 1px solid #2a1e10;
+padding-top: 8px;
+}
+.detail-row { margin-bottom: 6px; }
+.detail-mode {
+font-family: ‘Cinzel’, serif;
+font-size: 9px;
+font-weight: 600;
+letter-spacing: 0.12em;
+text-transform: uppercase;
+color: #4a3828;
+margin-bottom: 3px;
+}
 
-  .section {
-    margin-top: 28px;
-  }
+.tip-block {
+background: #1a130a;
+border-left: 2px solid var(–flame);
+border-radius: 0 5px 5px 0;
+padding: 9px 12px;
+margin-top: 10px;
+margin-bottom: 4px;
+}
+.tip-block p { font-size: 13px; color: #a09070; font-style: italic; line-height: 1.5; }
+.tip-block strong { color: var(–gold); font-style: normal; font-weight: 400; }
 
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-    padding-bottom: 7px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .section-icon {
-    font-size: 16px;
-    line-height: 1;
-  }
-
-  .section-title {
-    font-family: 'Cinzel', serif;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--gold);
-  }
-
-  .section-count {
-    margin-left: auto;
-    font-size: 12px;
-    color: var(--muted);
-    font-family: 'Cinzel', serif;
-  }
-
-  .item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 11px 12px;
-    border-radius: 6px;
-    margin-bottom: 5px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s, opacity 0.3s;
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
-  }
-
-  .item:active {
-    background: var(--surface2);
-  }
-
-  .item.done {
-    background: var(--done-bg);
-    border-color: #1a2e1a;
-    opacity: 0.65;
-  }
-
-  .item.done .item-name {
-    color: var(--done-text);
-    text-decoration: line-through;
-    text-decoration-color: #2d4d2d;
-  }
-
-  .item.done .item-note {
-    color: #3a5030;
-  }
-
-  .checkbox {
-    flex-shrink: 0;
-    width: 20px;
-    height: 20px;
-    border-radius: 4px;
-    border: 1.5px solid var(--muted);
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 1px;
-    transition: background 0.2s, border-color 0.2s;
-  }
-
-  .item.done .checkbox {
-    background: #2d5a28;
-    border-color: #3d7a33;
-  }
-
-  .checkmark {
-    display: none;
-    color: #7ac970;
-    font-size: 13px;
-    line-height: 1;
-  }
-
-  .item.done .checkmark { display: block; }
-
-  .item-body { flex: 1; min-width: 0; }
-
-  .item-name {
-    font-weight: 400;
-    font-size: 16px;
-    color: var(--text);
-    line-height: 1.3;
-  }
-
-  .item-note {
-    font-size: 13.5px;
-    color: var(--muted);
-    font-style: italic;
-    margin-top: 2px;
-    line-height: 1.4;
-  }
-
-  .tip-block {
-    background: #1a130a;
-    border-left: 2px solid var(--flame);
-    border-radius: 0 5px 5px 0;
-    padding: 9px 12px;
-    margin-top: 10px;
-    margin-bottom: 4px;
-  }
-
-  .tip-block p {
-    font-size: 13.5px;
-    color: #a09070;
-    font-style: italic;
-    line-height: 1.5;
-  }
-
-  .tip-block strong {
-    color: var(--gold);
-    font-style: normal;
-    font-weight: 400;
-  }
-
-  .reset-btn {
-    display: block;
-    margin: 40px auto 20px;
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    font-family: 'Cinzel', serif;
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 9px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .reset-btn:active { opacity: 0.6; }
-
-  .flame-divider {
-    text-align: center;
-    color: var(--flame);
-    font-size: 14px;
-    opacity: 0.4;
-    margin: 6px 0 2px;
-    letter-spacing: 8px;
-  }
+.reset-btn {
+display: block;
+margin: 40px auto 20px;
+background: none;
+border: 1px solid var(–border);
+color: var(–muted);
+font-family: ‘Cinzel’, serif;
+font-size: 11px;
+letter-spacing: 0.15em;
+text-transform: uppercase;
+padding: 9px 20px;
+border-radius: 4px;
+cursor: pointer;
+-webkit-tap-highlight-color: transparent;
+}
+.reset-btn:active { opacity: 0.6; }
+.flame-divider { text-align: center; color: var(–flame); font-size: 14px; opacity: 0.4; margin: 6px 0 2px; letter-spacing: 8px; }
 </style>
+
 </head>
 <body>
 
 <header>
-  <h1>⚔ Fated List — Remaining</h1>
-  <div class="progress-bar-wrap">
-    <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
-  </div>
+  <h1>&#9876; Fated List &mdash; Remaining</h1>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
   <div class="progress-label" id="progressLabel">0 of 0 complete</div>
 </header>
 
 <main>
 
-  <!-- LEGENDARY BOONS -->
-  <div class="section">
-    <div class="section-header">
-      <span class="section-icon">🌟</span>
-      <span class="section-title">Legendary Boons</span>
-      <span class="section-count" id="count-legendary"></span>
-    </div>
+<!-- ══ LEGENDARY BOONS ══ -->
 
-    <div class="item" data-id="divine-protection" data-section="legendary" onclick="toggle(this)">
-      <div class="checkbox"><span class="checkmark">✓</span></div>
-      <div class="item-body">
-        <div class="item-name">Divine Protection</div>
-        <div class="item-note">Athena — needs Brilliant Riposte + 2 of: Divine Strike / Flourish / Dash / Holy Shield</div>
-      </div>
-    </div>
-
-    <div class="item" data-id="fully-loaded" data-section="legendary" onclick="toggle(this)">
-      <div class="checkbox"><span class="checkmark">✓</span></div>
-      <div class="item-body">
-        <div class="item-name">Fully Loaded</div>
-        <div class="item-note">Artemis — any 2 of: Hunter's Mark, Exit Wounds, Support Fire (all Tier 1, easy)</div>
-      </div>
-    </div>
-
-    <div class="item" data-id="winter-harvest" data-section="legendary" onclick="toggle(this)">
-      <div class="checkbox"><span class="checkmark">✓</span></div>
-      <div class="item-body">
-        <div class="item-name">Winter Harvest</div>
-        <div class="item-note">Demeter — 2 of: Arctic Blast, Killing Freeze, Ravenous Will. Need a Demeter attack/dash boon first for Arctic Blast or Killing Freeze</div>
-      </div>
-    </div>
-
-    <div class="tip-block">
-      <p><strong>Tip:</strong> Use God's Legacy (Mirror) + Yarn of Ariadne (Well of Charon) + relevant keepsakes to raise legendary chances. There's a hidden roll even when prereqs are met — keep trying.</p>
-    </div>
+<div class="section">
+  <div class="section-header">
+    <span class="section-icon">&#11088;</span>
+    <span class="section-title">Legendary Boons</span>
+    <span class="section-count" id="count-legendary"></span>
   </div>
 
-  <!-- DIVINE PAIRINGS -->
-  <div class="section">
-    <div class="section-header">
-      <span class="section-icon">⚡</span>
-      <span class="section-title">Divine Pairings</span>
-      <span class="section-count" id="count-duos"></span>
-    </div>
-
-    <div class="item" data-id="lightning-phalanx" data-section="duos" onclick="toggle(this)">
-      <div class="checkbox"><span class="checkmark">✓</span></div>
-      <div class="item-body">
-        <div class="item-name">Lightning Phalanx</div>
-        <div class="item-note">Athena + Zeus — need Phalanx Shot + any Zeus boon. Incompatible with Aspect of Beowulf.</div>
+  <div class="item" data-id="divine-protection" data-section="legendary" onclick="toggle(this)">
+    <div class="checkbox"><span class="checkmark">&#10003;</span></div>
+    <div class="item-body">
+      <div class="item-name">Divine Protection</div>
+      <div class="item-note">Athena legendary. Brilliant Riposte is required (Cast — triggers shockwave on Death Defiance). Then need any 2 of the remaining boons below.</div>
+      <div class="pill-row">
+        <span class="pill-row-label">Requires</span>
+        <span class="pill cast"><span class="pill-icon">&#9679;</span> Brilliant Riposte</span>
+        <span class="pill attack"><span class="pill-icon">&#9876;</span> Divine Strike</span>
+        <span class="pill special"><span class="pill-icon">&#10022;</span> Divine Flourish</span>
+        <span class="pill dash"><span class="pill-icon">&#9670;</span> Divine Dash</span>
+        <span class="pill cast"><span class="pill-icon">&#9679;</span> Holy Shield</span>
       </div>
-    </div>
-
-    <div class="item" data-id="ice-wine" data-section="duos" onclick="toggle(this)">
-      <div class="checkbox"><span class="checkmark">✓</span></div>
-      <div class="item-body">
-        <div class="item-name">Ice Wine</div>
-        <div class="item-note">Demeter + Dionysus — need Trippy Shot + any Demeter boon. Incompatible with Blizzard Shot or Curse of Drowning.</div>
-      </div>
-    </div>
-
-    <div class="item" data-id="cold-fusion" data-section="duos" onclick="toggle(this)">
-      <div class="checkbox"><span class="checkmark">✓</span></div>
-      <div class="item-body">
-        <div class="item-name">Cold Fusion</div>
-        <div class="item-note">Demeter + Zeus — any boon from each god. Easiest of the three to set up.</div>
-      </div>
-    </div>
-
-    <div class="tip-block">
-      <p><strong>Tip:</strong> Only unlock the duo combos you're actively hunting. Fewer eligible duos = better odds of the specific one appearing.</p>
-    </div>
-  </div>
-
-  <!-- PRIMORDIAL -->
-  <div class="section">
-    <div class="section-header">
-      <span class="section-icon">🌀</span>
-      <span class="section-title">Primordial</span>
-      <span class="section-count" id="count-primordial"></span>
-    </div>
-
-    <div class="item" data-id="defiance" data-section="primordial" onclick="toggle(this)">
-      <div class="checkbox"><span class="checkmark">✓</span></div>
-      <div class="item-body">
-        <div class="item-name">Defiance (Boon)</div>
-        <div class="item-note">Chaos blessing — only appears if you already have another Chaos boon this run. Requires 2 Chaos gates. Buy Light of Ixion from the Well to guarantee a second gate.</div>
-      </div>
-    </div>
-
-    <div class="item" data-id="slippery" data-section="primordial" onclick="toggle(this)">
-      <div class="checkbox"><span class="checkmark">✓</span></div>
-      <div class="item-body">
-        <div class="item-name">Slippery (Bane)</div>
-        <div class="item-note">Chaos curse — delays Bloodstone reclaim. Just needs to be suffered once. Safe to take on non-Cast builds.</div>
+      <div class="detail-block">
+        <div class="detail-row">
+          <div class="detail-mode">Single keepsake</div>
+          <div class="pill-row"><span class="pill keepsake">&#129417; Owl Pendant (Athena) &mdash; wear all run</span></div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-mode">Swap per region</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Owl Pendant</span>
+            <span class="pill keepsake">T2 Yarn of Ariadne</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- WEAPON -->
-  <div class="section">
-    <div class="section-header">
-      <span class="section-icon">🏹</span>
-      <span class="section-title">Weapon Goals</span>
-      <span class="section-count" id="count-weapons"></span>
-    </div>
-
-    <div class="item" data-id="coronacht-rama" data-section="weapons" onclick="toggle(this)">
-      <div class="checkbox"><span class="checkmark">✓</span></div>
-      <div class="item-body">
-        <div class="item-name">Reach Surface — Hidden Aspect of Coronacht</div>
-        <div class="item-note">Aspect of Rama. Prereqs: Guan Yu revealed, 5 Titan Blood in Coronacht, hear waking phrase from Artemis ("drawn in the arms of the seventh avatar"). Equip Adamant Arrowhead keepsake.</div>
+  <div class="item" data-id="fully-loaded" data-section="legendary" onclick="toggle(this)">
+    <div class="checkbox"><span class="checkmark">&#10003;</span></div>
+    <div class="item-body">
+      <div class="item-name">Fully Loaded</div>
+      <div class="item-note">Artemis legendary. Any 2 of the boons below &mdash; all Tier 1 with no prereqs. Easiest legendary to obtain.</div>
+      <div class="pill-row">
+        <span class="pill-row-label">Requires</span>
+        <span class="pill attack"><span class="pill-icon">&#9876;</span> Hunter's Mark</span>
+        <span class="pill special"><span class="pill-icon">&#10022;</span> Exit Wounds</span>
+        <span class="pill cast"><span class="pill-icon">&#9679;</span> Support Fire</span>
       </div>
-    </div>
-
-    <div class="item" data-id="flurry-jab" data-section="weapons" onclick="toggle(this)">
-      <div class="checkbox"><span class="checkmark">✓</span></div>
-      <div class="item-body">
-        <div class="item-name">Flurry Jab (Eternal Spear)</div>
-        <div class="item-note">Daedalus Hammer upgrade — RNG. Use Aspect of Zagreus or Achilles only. Don't take any Spin upgrades or Flaring Spin (blocks it from appearing).</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- HARSH CONDITIONS -->
-  <div class="section">
-    <div class="section-header">
-      <span class="section-icon">🔥</span>
-      <span class="section-title">Harsh Conditions</span>
-      <span class="section-count" id="count-harsh"></span>
-    </div>
-
-    <div class="tip-block" style="margin-bottom:10px; margin-top:0;">
-      <p><strong>Strategy:</strong> Each condition only needs Rank 1. Run them solo with no other Pact conditions active. Easiest → hardest order below.</p>
-    </div>
-
-    <div class="item" data-id="lasting-consequences" data-section="harsh" onclick="toggle(this)">
-      <div class="checkbox"><span class="checkmark">✓</span></div>
-      <div class="item-body">
-        <div class="item-name">Lasting Consequences</div>
-        <div class="item-note">−20% healing from items at rank 1. Very minor — do this first.</div>
-      </div>
-    </div>
-
-    <div class="item" data-id="approval-process" data-section="harsh" onclick="toggle(this)">
-      <div class="checkbox"><span class="checkmark">✓</span></div>
-      <div class="item-body">
-        <div class="item-name">Approval Process</div>
-        <div class="item-note">2 boon choices instead of 3. Manageable if you stay flexible about your build.</div>
-      </div>
-    </div>
-
-    <div class="item" data-id="forced-overtime" data-section="harsh" onclick="toggle(this)">
-      <div class="checkbox"><span class="checkmark">✓</span></div>
-      <div class="item-body">
-        <div class="item-name">Forced Overtime</div>
-        <div class="item-note">Enemies move and attack faster. Easier with ranged weapons or strong Deflect boons.</div>
-      </div>
-    </div>
-
-    <div class="item" data-id="underworld-customs" data-section="harsh" onclick="toggle(this)">
-      <div class="checkbox"><span class="checkmark">✓</span></div>
-      <div class="item-body">
-        <div class="item-name">Underworld Customs</div>
-        <div class="item-note">No Centaur Hearts in chambers. Run on a weapon where you can avoid damage — bow or spear work well.</div>
-      </div>
-    </div>
-
-    <div class="item" data-id="routine-inspection" data-section="harsh" onclick="toggle(this)">
-      <div class="checkbox"><span class="checkmark">✓</span></div>
-      <div class="item-body">
-        <div class="item-name">Routine Inspection</div>
-        <div class="item-note">Removes a Mirror talent mid-run. Requires Mirror of Night to be fully unlocked first. Do this after completing Dark Reflections.</div>
+      <div class="detail-block">
+        <div class="detail-row">
+          <div class="detail-mode">Single keepsake</div>
+          <div class="pill-row"><span class="pill keepsake">&#127993; Adamant Arrowhead (Artemis) &mdash; wear all run</span></div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-mode">Swap per region</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Adamant Arrowhead</span>
+            <span class="pill keepsake">T2 Yarn of Ariadne</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- DARK REFLECTIONS -->
-  <div class="section">
-    <div class="section-header">
-      <span class="section-icon">🪞</span>
-      <span class="section-title">Dark Reflections</span>
-      <span class="section-count" id="count-mirror"></span>
-    </div>
-
-    <div class="tip-block" style="margin-bottom:10px; margin-top:0;">
-      <p><strong>Strategy:</strong> Don't do them all at once. Batch easy ones together, save Stubborn Defiance for last.</p>
-    </div>
-
-    <div class="item" data-id="deep-pockets" data-section="mirror" onclick="toggle(this)">
-      <div class="checkbox"><span class="checkmark">✓</span></div>
-      <div class="item-body">
-        <div class="item-name">Deep Pockets</div>
-        <div class="item-note">Starts you with bonus Obols. Zero downside — stack with another from this list.</div>
+  <div class="item" data-id="winter-harvest" data-section="legendary" onclick="toggle(this)">
+    <div class="checkbox"><span class="checkmark">&#10003;</span></div>
+    <div class="item-body">
+      <div class="item-name">Winter Harvest</div>
+      <div class="item-note">Demeter legendary. Need 2 qualifying boons. Arctic Blast and Killing Freeze are Tier 2 &mdash; first grab a Demeter Attack or Dash boon to unlock them. Ravenous Will has no prereq and is the easiest second pick.</div>
+      <div class="pill-row">
+        <span class="pill-row-label">Qualifying</span>
+        <span class="pill attack"><span class="pill-icon">&#9876;</span> Arctic Blast (T2)</span>
+        <span class="pill cast"><span class="pill-icon">&#9679;</span> Killing Freeze (T2)</span>
+        <span class="pill special"><span class="pill-icon">&#10022;</span> Ravenous Will</span>
       </div>
-    </div>
-
-    <div class="item" data-id="privileged-status" data-section="mirror" onclick="toggle(this)">
-      <div class="checkbox"><span class="checkmark">✓</span></div>
-      <div class="item-body">
-        <div class="item-name">Privileged Status</div>
-        <div class="item-note">+20% damage vs enemies with 2+ curses. Pure upside on multi-curse builds. Combine with Deep Pockets run.</div>
+      <div class="pill-row">
+        <span class="pill-row-label">Unlock T2</span>
+        <span class="pill attack"><span class="pill-icon">&#9876;</span> Frost Strike</span>
+        <span class="pill dash"><span class="pill-icon">&#9670;</span> Mistral Dash</span>
       </div>
-    </div>
-
-    <div class="item" data-id="high-confidence" data-section="mirror" onclick="toggle(this)">
-      <div class="checkbox"><span class="checkmark">✓</span></div>
-      <div class="item-body">
-        <div class="item-name">High Confidence</div>
-        <div class="item-note">+5% damage per rank while above 80% health. Arthur sword with Spiked Collar keepsake helps stay healthy. Combine with Abyssal Blood run.</div>
-      </div>
-    </div>
-
-    <div class="item" data-id="abyssal-blood" data-section="mirror" onclick="toggle(this)">
-      <div class="checkbox"><span class="checkmark">✓</span></div>
-      <div class="item-body">
-        <div class="item-name">Abyssal Blood</div>
-        <div class="item-note">Slows/weakens enemies with a Cast lodged in them. Run Arthur sword — strong enough that you won't miss Boiling Blood.</div>
-      </div>
-    </div>
-
-    <div class="item" data-id="ruthless-reflex" data-section="mirror" onclick="toggle(this)">
-      <div class="checkbox"><span class="checkmark">✓</span></div>
-      <div class="item-body">
-        <div class="item-name">Ruthless Reflex</div>
-        <div class="item-note">+50% damage when dashing before getting hit. Gilgamesh fists give 3 base dashes — much easier to trigger consistently.</div>
-      </div>
-    </div>
-
-    <div class="item" data-id="stubborn-defiance" data-section="mirror" onclick="toggle(this)">
-      <div class="checkbox"><span class="checkmark">✓</span></div>
-      <div class="item-body">
-        <div class="item-name">Stubborn Defiance</div>
-        <div class="item-note">⚠ Do this last. Replaces Death Defiance with a single 30% heal on 0 HP. Use Zeus Shield or Achilles Spear with a strong build at low heat.</div>
+      <div class="detail-block">
+        <div class="detail-row">
+          <div class="detail-mode">Single keepsake</div>
+          <div class="pill-row"><span class="pill keepsake">&#10052; Frostbitten Horn (Demeter) &mdash; wear all run</span></div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-mode">Swap per region</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Frostbitten Horn</span>
+            <span class="pill keepsake">T2 Yarn of Ariadne</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- LYRE -->
-  <div class="section">
-    <div class="section-header">
-      <span class="section-icon">🎵</span>
-      <span class="section-title">Other</span>
-      <span class="section-count" id="count-other"></span>
-    </div>
+  <div class="tip-block"><p><strong>Tip:</strong> Keep God's Legacy (Mirror) active and use Yarn of Ariadne from the Well of Charon. There's a hidden roll for legendaries even when prereqs are met.</p></div>
+</div>
 
-    <div class="item" data-id="lyre" data-section="other" onclick="toggle(this)">
-      <div class="checkbox"><span class="checkmark">✓</span></div>
-      <div class="item-body">
-        <div class="item-name">Learn to Play the Lyre</div>
-        <div class="item-note">Bond with Orpheus is done — just keep talking to him between runs. The lyre dialogue will eventually cycle through naturally.</div>
+<!-- ══ DIVINE PAIRINGS ══ -->
+
+<div class="section">
+  <div class="section-header">
+    <span class="section-icon">&#9889;</span>
+    <span class="section-title">Divine Pairings</span>
+    <span class="section-count" id="count-duos"></span>
+  </div>
+
+  <div class="item" data-id="lightning-phalanx" data-section="duos" onclick="toggle(this)">
+    <div class="checkbox"><span class="checkmark">&#10003;</span></div>
+    <div class="item-body">
+      <div class="item-name">Lightning Phalanx</div>
+      <div class="item-note">Athena + Zeus duo. Phalanx Shot is your Cast (a floating shield). Pair it with any Zeus boon &mdash; all listed count.</div>
+      <div class="pill-row">
+        <span class="pill-row-label">Requires</span>
+        <span class="pill cast"><span class="pill-icon">&#9679;</span> Phalanx Shot (Athena)</span>
+        <span class="pill attack"><span class="pill-icon">&#9876;</span> Lightning Strike (Zeus)</span>
+        <span class="pill special"><span class="pill-icon">&#10022;</span> Thunder Flourish (Zeus)</span>
+        <span class="pill dash"><span class="pill-icon">&#9670;</span> Thunder Dash (Zeus)</span>
+        <span class="pill cast"><span class="pill-icon">&#9679;</span> Electric Shot (Zeus)</span>
+      </div>
+      <div class="pill-row">
+        <span class="pill-row-label">Avoid</span>
+        <span class="pill conflict">&#10005; Aspect of Beowulf (Shield weapon)</span>
+      </div>
+      <div class="detail-block">
+        <div class="detail-row">
+          <div class="detail-mode">Single keepsake</div>
+          <div class="pill-row"><span class="pill keepsake">&#129417; Owl Pendant &mdash; land Phalanx Shot first, Zeus appears naturally</span></div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-mode">Swap per region</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Owl Pendant</span>
+            <span class="pill keepsake">T2 Thunder Signet (if no Zeus boon yet)</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="flame-divider">· · ·</div>
-  <button class="reset-btn" onclick="resetAll()">Reset All</button>
+  <div class="item" data-id="ice-wine" data-section="duos" onclick="toggle(this)">
+    <div class="checkbox"><span class="checkmark">&#10003;</span></div>
+    <div class="item-body">
+      <div class="item-name">Ice Wine</div>
+      <div class="item-note">Demeter + Dionysus duo. Trippy Shot is the key &mdash; it's your Cast (Festive Fog cloud). Do not take the conflicting Casts or Trippy Shot won't appear.</div>
+      <div class="pill-row">
+        <span class="pill-row-label">Requires</span>
+        <span class="pill cast"><span class="pill-icon">&#9679;</span> Trippy Shot (Dionysus)</span>
+        <span class="pill attack"><span class="pill-icon">&#9876;</span> Frost Strike (Demeter)</span>
+        <span class="pill dash"><span class="pill-icon">&#9670;</span> Mistral Dash (Demeter)</span>
+      </div>
+      <div class="pill-row">
+        <span class="pill-row-label">Avoid</span>
+        <span class="pill conflict">&#10005; Blizzard Shot (Demeter Cast)</span>
+        <span class="pill conflict">&#10005; Curse of Drowning (Dionysus Cast)</span>
+      </div>
+      <div class="detail-block">
+        <div class="detail-row">
+          <div class="detail-mode">Single keepsake</div>
+          <div class="pill-row"><span class="pill keepsake">&#127863; Overflowing Cup (Dionysus) &mdash; lock in Trippy Shot first</span></div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-mode">Swap per region</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Overflowing Cup</span>
+            <span class="pill keepsake">T2 Frostbitten Horn (if no Demeter boon yet)</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" data-id="cold-fusion" data-section="duos" onclick="toggle(this)">
+    <div class="checkbox"><span class="checkmark">&#10003;</span></div>
+    <div class="item-body">
+      <div class="item-name">Cold Fusion</div>
+      <div class="item-note">Demeter + Zeus duo. Any one boon from each god. No boon restrictions, no weapon conflicts &mdash; easiest duo to set up.</div>
+      <div class="pill-row">
+        <span class="pill-row-label">Requires</span>
+        <span class="pill neutral">Any Demeter boon</span>
+        <span class="pill neutral">Any Zeus boon</span>
+      </div>
+      <div class="detail-block">
+        <div class="detail-row">
+          <div class="detail-mode">Single keepsake</div>
+          <div class="pill-row"><span class="pill keepsake">&#10052; Frostbitten Horn &mdash; Demeter is rarer; Zeus will appear naturally</span></div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-mode">Swap per region</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Frostbitten Horn</span>
+            <span class="pill keepsake">T2 Thunder Signet (only if no Zeus boon yet)</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-block"><p><strong>Tip:</strong> Hunt one duo per run. Fewer eligible duos in your pool = better odds the one you want rolls. God's Legacy (Mirror) applies here too.</p></div>
+</div>
+
+<!-- ══ PRIMORDIAL ══ -->
+
+<div class="section">
+  <div class="section-header">
+    <span class="section-icon">&#127744;</span>
+    <span class="section-title">Primordial</span>
+    <span class="section-count" id="count-primordial"></span>
+  </div>
+
+  <div class="item" data-id="defiance" data-section="primordial" onclick="toggle(this)">
+    <div class="checkbox"><span class="checkmark">&#10003;</span></div>
+    <div class="item-body">
+      <div class="item-name">Defiance (Boon)</div>
+      <div class="item-note">Chaos legendary &mdash; adds +1 Death Defiance use. Only appears from a second Chaos gate if you already hold another Chaos boon this run. Notably rare even when eligible. Use God's Legacy + Fated Persuasion rerolls at the gate. Buy Light of Ixion from the Well to guarantee a second gate.</div>
+      <div class="pill-row">
+        <span class="pill-row-label">Requires</span>
+        <span class="pill neutral">Any other Chaos boon this run (2nd gate+)</span>
+      </div>
+      <div class="detail-block">
+        <div class="detail-row">
+          <div class="detail-mode">Single keepsake</div>
+          <div class="pill-row"><span class="pill keepsake">&#129370; Cosmic Egg &mdash; free gate entry, +40% rare Chaos boon chance</span></div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-mode">Swap per region</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1&ndash;T2 Cosmic Egg</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" data-id="slippery" data-section="primordial" onclick="toggle(this)">
+    <div class="checkbox"><span class="checkmark">&#10003;</span></div>
+    <div class="item-body">
+      <div class="item-name">Slippery (Bane)</div>
+      <div class="item-note">Chaos curse &mdash; delays Bloodstone reclaim for a few chambers. Needs to be suffered just once, in any run. Essentially painless on non-Cast builds. No prereqs, no conflicts &mdash; just keep entering gates until it rolls.</div>
+      <div class="detail-block">
+        <div class="detail-row">
+          <div class="detail-mode">Single keepsake</div>
+          <div class="pill-row"><span class="pill keepsake">&#129370; Cosmic Egg &mdash; enter gates freely at no HP cost</span></div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-mode">Swap per region</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1&ndash;T2 Cosmic Egg</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ WEAPON GOALS ══ -->
+
+<div class="section">
+  <div class="section-header">
+    <span class="section-icon">&#127993;</span>
+    <span class="section-title">Weapon Goals</span>
+    <span class="section-count" id="count-weapons"></span>
+  </div>
+
+  <div class="item" data-id="flurry-jab" data-section="weapons" onclick="toggle(this)">
+    <div class="checkbox"><span class="checkmark">&#10003;</span></div>
+    <div class="item-body">
+      <div class="item-name">Flurry Jab (Eternal Spear)</div>
+      <div class="item-note">Daedalus Hammer upgrade &mdash; pure RNG, no prereqs. Converts Attack to a rapid auto-jab on hold. Flaring Spin blocks it from appearing entirely &mdash; never take any Spin upgrade in this run. If your first Hammer offers only Spin options, consider resetting. Achilles Aspect recommended for a comfortable wait.</div>
+      <div class="pill-row">
+        <span class="pill-row-label">Weapon</span>
+        <span class="pill weapon">Aspect of Zagreus</span>
+        <span class="pill weapon">Aspect of Achilles</span>
+      </div>
+      <div class="pill-row">
+        <span class="pill-row-label">Avoid</span>
+        <span class="pill conflict">&#10005; Flaring Spin (blocks Flurry Jab)</span>
+        <span class="pill conflict">&#10005; Massive Spin</span>
+        <span class="pill conflict">&#10005; Quick Spin</span>
+        <span class="pill conflict">&#10005; Aspect of Hades</span>
+        <span class="pill conflict">&#10005; Aspect of Guan Yu</span>
+      </div>
+      <div class="detail-block">
+        <div class="detail-row">
+          <div class="detail-mode">Goal-focused (faster)</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Shattered Shackle</span>
+            <span class="pill keepsake">T2 build god keepsake</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-mode">Safety-focused (safer clear)</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Broken Spearpoint</span>
+            <span class="pill keepsake">T2 build god keepsake</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ HARSH CONDITIONS ══ -->
+
+<div class="section">
+  <div class="section-header">
+    <span class="section-icon">&#128293;</span>
+    <span class="section-title">Harsh Conditions</span>
+    <span class="section-count" id="count-harsh"></span>
+  </div>
+
+  <div class="tip-block" style="margin-bottom:10px;margin-top:0;">
+    <p><strong>Strategy:</strong> Each condition needs only Rank 1 active. Run each solo with no other Pact conditions. Easiest &#8594; hardest order below.</p>
+  </div>
+
+  <div class="item" data-id="lasting-consequences" data-section="harsh" onclick="toggle(this)">
+    <div class="checkbox"><span class="checkmark">&#10003;</span></div>
+    <div class="item-body">
+      <div class="item-name">Lasting Consequences</div>
+      <div class="item-meta">
+        <span class="skull-badge">&#9760; &times;1 heat</span>
+        <span class="fire-badge">&#128293;</span>
+      </div>
+      <div class="item-note">&minus;25% effectiveness from all healing sources at rank 1. Very minor &mdash; do this first.</div>
+      <div class="detail-block">
+        <div class="detail-row">
+          <div class="detail-mode">Defensive</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Broken Spearpoint</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-mode">Power alt</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Shattered Shackle</span>
+            <span class="pill keepsake">T2 main god keepsake</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" data-id="approval-process" data-section="harsh" onclick="toggle(this)">
+    <div class="checkbox"><span class="checkmark">&#10003;</span></div>
+    <div class="item-body">
+      <div class="item-name">Approval Process</div>
+      <div class="item-meta">
+        <span class="skull-badge">&#9760; &times;2 heat</span>
+        <span class="fire-badge">&#128293;</span>
+      </div>
+      <div class="item-note">2 boon choices instead of 3 when offered gods or Daedalus Hammer upgrades. Manageable with Fated Persuasion rerolls (Mirror) and a flexible build mentality.</div>
+      <div class="detail-block">
+        <div class="detail-row">
+          <div class="detail-mode">Defensive</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 primary god keepsake (land key boons early before pool narrows)</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-mode">Power alt</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 first god keepsake</span>
+            <span class="pill keepsake">T2 second god keepsake</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" data-id="underworld-customs" data-section="harsh" onclick="toggle(this)">
+    <div class="checkbox"><span class="checkmark">&#10003;</span></div>
+    <div class="item-body">
+      <div class="item-name">Underworld Customs</div>
+      <div class="item-meta">
+        <span class="skull-badge">&#9760; &times;2 heat</span>
+        <span class="fire-badge">&#128293;&#128293;</span>
+      </div>
+      <div class="item-note">Sacrifice 1 boon on leaving each region (Tartarus, Asphodel, Elysium). You get some gold back. Painful for tight builds &mdash; prioritise breadth of boons over depth so any one loss hurts less.</div>
+      <div class="detail-block">
+        <div class="detail-row">
+          <div class="detail-mode">Defensive</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 primary god keepsake</span>
+            <span class="pill keepsake">T2 Broken Spearpoint</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-mode">Power alt</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 first god keepsake</span>
+            <span class="pill keepsake">T2 second god keepsake</span>
+            <span class="pill keepsake">T3 Yarn of Ariadne (try landing a legendary before Styx exit takes a boon)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" data-id="forced-overtime" data-section="harsh" onclick="toggle(this)">
+    <div class="checkbox"><span class="checkmark">&#10003;</span></div>
+    <div class="item-body">
+      <div class="item-name">Forced Overtime</div>
+      <div class="item-meta">
+        <span class="skull-badge">&#9760; &times;3 heat</span>
+        <span class="fire-badge">&#128293;&#128293;&#128293;</span>
+      </div>
+      <div class="item-note">All enemies move and attack +20% faster. Mechanically the hardest of these five &mdash; requires real adaptation. Ranged weapons (bow) or strong Deflect/Chill boons help most. Chill builds naturally slow enemies back down.</div>
+      <div class="detail-block">
+        <div class="detail-row">
+          <div class="detail-mode">Defensive</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Broken Spearpoint (invuln frames are most valuable here)</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-mode">Power alt</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Lambent Plume &mdash; stacks dodge + move speed per fast clear, directly counters enemy speed</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" data-id="routine-inspection" data-section="harsh" onclick="toggle(this)">
+    <div class="checkbox"><span class="checkmark">&#10003;</span></div>
+    <div class="item-body">
+      <div class="item-name">Routine Inspection</div>
+      <div class="item-meta">
+        <span class="skull-badge">&#9760; &times;2 heat</span>
+        <span class="fire-badge">&#128293;&#128293;&#128293;</span>
+      </div>
+      <div class="item-note">Deactivates 3 Mirror talents from the bottom at run start. The Mirror hit is locked in before you leave &mdash; keepsakes can't prevent it. Requires full Mirror of Night unlock first. Do this after finishing Dark Reflections.</div>
+      <div class="detail-block">
+        <div class="detail-row">
+          <div class="detail-mode">Defensive</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Broken Spearpoint</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-mode">Power alt</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Shattered Shackle (compensates early if damage Mirror talents get stripped)</span>
+            <span class="pill keepsake">T2 main god keepsake</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DARK REFLECTIONS ══ -->
+
+<div class="section">
+  <div class="section-header">
+    <span class="section-icon">&#129710;</span>
+    <span class="section-title">Dark Reflections</span>
+    <span class="section-count" id="count-mirror"></span>
+  </div>
+
+  <div class="tip-block" style="margin-bottom:10px;margin-top:0;">
+    <p><strong>Strategy:</strong> Each just needs one successful clear with that Mirror side active. Batch easy ones, save Stubborn Defiance for last.</p>
+  </div>
+
+  <div class="item" data-id="deep-pockets" data-section="mirror" onclick="toggle(this)">
+    <div class="checkbox"><span class="checkmark">&#10003;</span></div>
+    <div class="item-body">
+      <div class="item-name">Deep Pockets</div>
+      <div class="item-note">Starts each run with bonus Obols. Zero downside &mdash; batch with Privileged Status in the same run.</div>
+      <div class="detail-block">
+        <div class="detail-row">
+          <div class="detail-mode">Goal-focused</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 main god keepsake</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-mode">Safety-focused</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Broken Spearpoint</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" data-id="privileged-status" data-section="mirror" onclick="toggle(this)">
+    <div class="checkbox"><span class="checkmark">&#10003;</span></div>
+    <div class="item-body">
+      <div class="item-name">Privileged Status</div>
+      <div class="item-note">+20% damage vs enemies with 2+ status effects. Pure upside on multi-curse builds (Zeus + Dionysus, Ares + Aphrodite). Batch with Deep Pockets.</div>
+      <div class="detail-block">
+        <div class="detail-row">
+          <div class="detail-mode">Goal-focused</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 multi-curse god keepsake</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-mode">Safety-focused</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Broken Spearpoint</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" data-id="high-confidence" data-section="mirror" onclick="toggle(this)">
+    <div class="checkbox"><span class="checkmark">&#10003;</span></div>
+    <div class="item-body">
+      <div class="item-name">High Confidence</div>
+      <div class="item-note">+5% damage per rank while above 80% health. Run Arthur sword &mdash; its Holy Excalibur field and output let you stay healthy. Batch with Abyssal Blood in the same run.</div>
+      <div class="pill-row">
+        <span class="pill-row-label">Weapon</span>
+        <span class="pill weapon">Aspect of Arthur (Stygian Blade)</span>
+      </div>
+      <div class="detail-block">
+        <div class="detail-row">
+          <div class="detail-mode">Goal-focused</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Owl Pendant (Athena Deflect synergises with Arthur field)</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-mode">Safety-focused</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Myrmidon Bracer (&minus;30% frontal damage, tank with Arthur)</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" data-id="abyssal-blood" data-section="mirror" onclick="toggle(this)">
+    <div class="checkbox"><span class="checkmark">&#10003;</span></div>
+    <div class="item-body">
+      <div class="item-name">Abyssal Blood</div>
+      <div class="item-note">Enemies with a Cast lodged in them are slowed and weakened. Run Arthur sword &mdash; strong enough output that you won't miss Boiling Blood from the other Mirror side. Batch with High Confidence.</div>
+      <div class="pill-row">
+        <span class="pill-row-label">Weapon</span>
+        <span class="pill weapon">Aspect of Arthur (Stygian Blade)</span>
+      </div>
+      <div class="detail-block">
+        <div class="detail-row">
+          <div class="detail-mode">Goal-focused</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Owl Pendant</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-mode">Safety-focused</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Myrmidon Bracer</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" data-id="ruthless-reflex" data-section="mirror" onclick="toggle(this)">
+    <div class="checkbox"><span class="checkmark">&#10003;</span></div>
+    <div class="item-body">
+      <div class="item-name">Ruthless Reflex</div>
+      <div class="item-note">+50% damage when you dash before an incoming hit lands. Gilgamesh fists give 3 base dashes &mdash; far easier to proc consistently than with other weapons.</div>
+      <div class="pill-row">
+        <span class="pill-row-label">Weapon</span>
+        <span class="pill weapon">Aspect of Gilgamesh (Twin Fists)</span>
+      </div>
+      <div class="detail-block">
+        <div class="detail-row">
+          <div class="detail-mode">Goal-focused</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Lambent Plume (more dash speed = more procs)</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-mode">Safety-focused</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Broken Spearpoint</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" data-id="stubborn-defiance" data-section="mirror" onclick="toggle(this)">
+    <div class="checkbox"><span class="checkmark">&#10003;</span></div>
+    <div class="item-body">
+      <div class="item-name">Stubborn Defiance</div>
+      <div class="item-note">&#9888; Do this last. Replaces all Death Defiance stacks with a single 30% heal on reaching 0 HP &mdash; no multi-life safety net. Use Zeus Shield or Achilles Spear with a strong build at zero or minimal heat.</div>
+      <div class="pill-row">
+        <span class="pill-row-label">Weapon</span>
+        <span class="pill weapon">Aspect of Zeus (Shield)</span>
+        <span class="pill weapon">Aspect of Achilles (Spear)</span>
+      </div>
+      <div class="detail-block">
+        <div class="detail-row">
+          <div class="detail-mode">Goal-focused</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 build anchor keepsake (Thunder Signet for Zeus Shield)</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-mode">Safety-focused</div>
+          <div class="pill-row">
+            <span class="pill keepsake">T1 Broken Spearpoint (almost mandatory &mdash; no multi-life backup)</span>
+            <span class="pill keepsake">T3 Evergreen Acorn</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="flame-divider">&middot; &middot; &middot;</div>
+<button class="reset-btn" onclick="resetAll()">Reset All</button>
 
 </main>
 
 <script>
-  const STORAGE_KEY = 'hades_checklist_v1';
-
-  function loadState() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
-    catch { return {}; }
-  }
-
-  function saveState(state) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }
-
+  const STORAGE_KEY = 'hades_checklist_v2';
+  function loadState() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; } }
+  function saveState(s) { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
   function toggle(el) {
     const id = el.dataset.id;
-    const state = loadState();
-    state[id] = !state[id];
-    saveState(state);
-    applyState(el, state[id]);
+    const s = loadState();
+    s[id] = !s[id];
+    saveState(s);
+    el.classList.toggle('done', s[id]);
     updateProgress();
   }
-
-  function applyState(el, done) {
-    el.classList.toggle('done', done);
-  }
-
   function updateProgress() {
-    const state = loadState();
-    const allItems = document.querySelectorAll('.item[data-id]');
-    const total = allItems.length;
-    const done = [...allItems].filter(el => state[el.dataset.id]).length;
+    const s = loadState();
+    const all = document.querySelectorAll('.item[data-id]');
+    const total = all.length;
+    const done = [...all].filter(el => s[el.dataset.id]).length;
     const pct = total ? Math.round((done / total) * 100) : 0;
     document.getElementById('progressFill').style.width = pct + '%';
-    document.getElementById('progressLabel').textContent = `${done} of ${total} complete`;
-
-    // Section counts
+    document.getElementById('progressLabel').textContent = done + ' of ' + total + ' complete';
     const sections = {};
-    allItems.forEach(el => {
-      const s = el.dataset.section;
-      if (!sections[s]) sections[s] = { total: 0, done: 0 };
-      sections[s].total++;
-      if (state[el.dataset.id]) sections[s].done++;
+    all.forEach(el => {
+      const sec = el.dataset.section;
+      if (!sections[sec]) sections[sec] = { total: 0, done: 0 };
+      sections[sec].total++;
+      if (s[el.dataset.id]) sections[sec].done++;
     });
-    Object.entries(sections).forEach(([s, { total, done }]) => {
-      const el = document.getElementById('count-' + s);
-      if (el) el.textContent = `${done}/${total}`;
+    Object.entries(sections).forEach(([sec, v]) => {
+      const el = document.getElementById('count-' + sec);
+      if (el) el.textContent = v.done + '/' + v.total;
     });
   }
-
   function resetAll() {
     if (!confirm('Reset all checkboxes?')) return;
     localStorage.removeItem(STORAGE_KEY);
     document.querySelectorAll('.item[data-id]').forEach(el => el.classList.remove('done'));
     updateProgress();
   }
-
-  // Init
-  const state = loadState();
-  document.querySelectorAll('.item[data-id]').forEach(el => {
-    if (state[el.dataset.id]) applyState(el, true);
-  });
+  const initState = loadState();
+  document.querySelectorAll('.item[data-id]').forEach(el => { if (initState[el.dataset.id]) el.classList.add('done'); });
   updateProgress();
 </script>
+
 </body>
 </html>
